@@ -49,7 +49,7 @@ const AdminUserPageComp = () => {
     },
     onSuccess: () => {
       utils.user.getAll.invalidate();
-      router.push(`/user`);
+      router.push(`/u`);
     },
   });
 

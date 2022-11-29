@@ -50,7 +50,7 @@ const AdminCategoryPageComp = () => {
     },
     onSuccess: () => {
       utils.user.getAll.invalidate();
-      router.push(`/category`);
+      router.push(`/c`);
     },
   });
 
@@ -67,7 +67,7 @@ const AdminCategoryPageComp = () => {
       }
     },
     onSettled: () => {
-      router.push("/category");
+      router.push("/c");
     },
   });
 

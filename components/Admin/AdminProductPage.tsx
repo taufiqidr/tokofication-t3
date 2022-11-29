@@ -56,7 +56,7 @@ const AdminProductPageComp = () => {
     },
     onSuccess: () => {
       utils.user.getAll.invalidate();
-      router.push(`/product`);
+      router.push(`/p`);
     },
   });
 
@@ -73,7 +73,7 @@ const AdminProductPageComp = () => {
       }
     },
     onSettled: () => {
-      router.push("/product");
+      router.push("/p");
     },
   });
 

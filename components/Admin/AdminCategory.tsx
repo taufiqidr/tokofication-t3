@@ -10,7 +10,7 @@ const AdminCategoryComp = () => {
   if (isLoading) return <Loading />;
   return (
     <div className="flex flex-col">
-      <New link="category/new" item="Category" />
+      <New link="c/new" item="Category" />
       <div className="flex justify-center">
         <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
           <thead className="bg-gray-50 text-xs uppercase text-gray-700 hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-400">

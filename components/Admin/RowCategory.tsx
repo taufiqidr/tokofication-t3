@@ -20,7 +20,7 @@ const Category = ({ id, name }: Category) => {
       </td>
       <td className="border-l border-gray-400 py-4 px-6">
         <span className="text-xl text-white hover:text-blue-400">
-          <Link href={`category/${id}/edit`}>
+          <Link href={`c/${id}`}>
             <FaEdit />
           </Link>
         </span>
