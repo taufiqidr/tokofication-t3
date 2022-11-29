@@ -10,31 +10,6 @@ const Navbar = () => {
   if (status === "authenticated") {
     menu = (
       <>
-        {session.user?.role === "ADMIN" && (
-          <>
-            <li>
-              <Link href={"/dashboard"}>
-                <span className="cursor-pointer">Dashboard</span>
-              </Link>
-            </li>
-            <li>
-              <Link href={"/user"}>
-                <span className="cursor-pointer">User</span>
-              </Link>
-            </li>
-            <li>
-              <Link href={"/product"}>
-                <span className="cursor-pointer">Product</span>
-              </Link>
-            </li>
-          </>
-        )}
-
-        <li>
-          <Link href={"/c"}>
-            <span className="cursor-pointer">Category</span>
-          </Link>
-        </li>
         <li>
           <span className="cursor-pointer" onClick={() => signOut()}>
             Logout
@@ -46,11 +21,6 @@ const Navbar = () => {
   } else if (status === "unauthenticated") {
     menu = (
       <>
-        <li>
-          <Link href={"/c"}>
-            <span className="cursor-pointer hover:text-blue-500">Category</span>
-          </Link>
-        </li>
         <li>
           <div
             onClick={() => signIn("discord")}
@@ -74,6 +44,21 @@ const Navbar = () => {
         <div>{user}</div>
         <nav className="h-full">
           <ul className="mx-3 flex flex-row items-center gap-x-3 text-xl">
+            <li>
+              <Link href={"/c"}>
+                <span className="cursor-pointer">Category</span>
+              </Link>
+            </li>
+            <li>
+              <Link href={"/p"}>
+                <span className="cursor-pointer">Product</span>
+              </Link>
+            </li>
+            <li>
+              <Link href={"/u"}>
+                <span className="cursor-pointer">User</span>
+              </Link>
+            </li>
             {menu}
           </ul>
         </nav>

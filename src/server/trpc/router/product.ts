@@ -1,31 +1,13 @@
 import { z } from "zod";
-import { router, protectedProcedure, publicProcedure } from "../trpc";
+import {
+  router,
+  protectedProcedure,
+  publicProcedure,
+  adminProcedure,
+} from "../trpc";
 
 export const productRouter = router({
-  postProduct: protectedProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        categoryId: z.string(),
-        price: z.number(),
-        stock: z.number(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      try {
-        await ctx.prisma.product.create({
-          data: {
-            name: input.name,
-            userId: ctx.session.user.id,
-            price: input.price,
-            stock: input.stock,
-            categoryId: input.categoryId,
-          },
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }),
+  //public
   getAll: publicProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.product.findMany({
@@ -70,6 +52,56 @@ export const productRouter = router({
         console.log("error", error);
       }
     }),
+  getByCategory: publicProcedure
+    .input(
+      z.object({
+        categoryId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.product.findMany({
+          where: {
+            categoryId: input.categoryId,
+          },
+          select: {
+            id: true,
+            name: true,
+            category: true,
+            price: true,
+            stock: true,
+            user: true,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
+  getByUser: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.product.findMany({
+          where: {
+            userId: input.userId,
+          },
+          select: {
+            id: true,
+            name: true,
+            category: true,
+            price: true,
+            stock: true,
+            user: true,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
   countProduct: publicProcedure
     .input(
       z.object({
@@ -87,7 +119,33 @@ export const productRouter = router({
         console.log("error", error);
       }
     }),
-  deleteProduct: protectedProcedure
+  //user only
+  postProduct: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        categoryId: z.string(),
+        price: z.number(),
+        stock: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.product.create({
+          data: {
+            name: input.name,
+            userId: ctx.session.user.id,
+            price: input.price,
+            stock: input.stock,
+            categoryId: input.categoryId,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }),
+
+  deleteProductUser: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -104,7 +162,57 @@ export const productRouter = router({
         console.log("error", error);
       }
     }),
-  updateProduct: protectedProcedure
+
+  updateProductUser: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        categoryId: z.string(),
+        price: z.number(),
+        stock: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.product.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            name: input.name,
+            userId: ctx.session.user.id,
+            price: input.price,
+            stock: input.stock,
+            categoryId: input.categoryId,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
+
+  //admin only
+
+  deleteProduct: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.product.delete({
+          where: {
+            id: input.id,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
+
+  updateProduct: adminProcedure
     .input(
       z.object({
         id: z.string(),

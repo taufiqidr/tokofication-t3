@@ -1,27 +1,33 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Back from "../../../../components/Back";
-import Loading from "../../../../components/Loading";
-import { trpc } from "../../../utils/trpc";
+import Back from "../Back";
+import Loading from "../Loading";
+import { trpc } from "../../src/utils/trpc";
 
-const EditCategory = () => {
-  const [category_name, setCategory_name] = useState("");
-
-  const [modal, setModal] = useState(false);
+const AdminProductPageComp = () => {
+  const [product_name, setProduct_name] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("");
+  const [modal, setModal] = useState(false);
+
+  const [productId, setProductId] = useState("");
   const id = useRouter().query.id;
 
-  const { data, isLoading } = trpc.category.getOne.useQuery({
-    id: categoryId as string,
+  const { data, isLoading } = trpc.product.getOne.useQuery({
+    id: productId as string,
   });
 
   useEffect(() => {
-    if (id) setCategoryId(String(id));
+    if (id) setProductId(String(id));
   }, [id]);
 
   useEffect(() => {
     if (data) {
-      setCategory_name(String(data?.name));
+      setProduct_name(String(data?.name));
+      setCategoryId(data.category.id);
+      setPrice(String(data.price));
+      setStock(String(data.stock));
     } else {
     }
   }, [data]);
@@ -29,16 +35,16 @@ const EditCategory = () => {
   const utils = trpc.useContext();
   const router = useRouter();
 
-  const updateCategory = trpc.category.updateCategory.useMutation({
+  const updateProduct = trpc.product.updateProduct.useMutation({
     onMutate: () => {
-      utils.category.getAll.cancel();
-      const optimisticUpdate = utils.category.getAll.getData();
+      utils.product.getAll.cancel();
+      const optimisticUpdate = utils.product.getAll.getData();
 
       if (optimisticUpdate) {
-        utils.category.getAll.setData(
+        utils.product.getAll.setData(
           undefined,
           optimisticUpdate.map((t) =>
-            t.id === categoryId
+            t.id === productId
               ? {
                   ...t,
                   ...data,
@@ -50,28 +56,28 @@ const EditCategory = () => {
     },
     onSuccess: () => {
       utils.user.getAll.invalidate();
-      router.push(`/category`);
+      router.push(`/product`);
     },
   });
 
-  const deleteCategory = trpc.category.deleteCategory.useMutation({
+  const deleteProduct = trpc.product.deleteProduct.useMutation({
     onMutate: () => {
-      utils.category.getAll.cancel();
-      const optimisticUpdate = utils.category.getAll.getData();
+      utils.product.getAll.cancel();
+      const optimisticUpdate = utils.product.getAll.getData();
 
       if (optimisticUpdate) {
-        utils.category.getAll.setData(
+        utils.product.getAll.setData(
           undefined,
-          optimisticUpdate.filter((c) => c.id != categoryId)
+          optimisticUpdate.filter((c) => c.id != productId)
         );
       }
     },
     onSettled: () => {
-      router.push("/category");
+      router.push("/product");
     },
   });
 
-  const disabled = !Boolean(category_name);
+  const disabled = !Boolean(product_name && price && stock && categoryId);
 
   if (isLoading) return <Loading />;
   return (
@@ -124,13 +130,13 @@ const EditCategory = () => {
                   />
                 </svg>
                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                  Are you sure you want to delete this category?
+                  Are you sure you want to delete this product?
                 </h3>
                 <button
                   data-modal-toggle="popup-modal"
                   onClick={() => {
-                    deleteCategory.mutate({
-                      id: categoryId as string,
+                    deleteProduct.mutate({
+                      id: productId as string,
                     });
                   }}
                   type="button"
@@ -155,26 +161,80 @@ const EditCategory = () => {
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              updateCategory.mutate({
-                id: categoryId as string,
-                name: category_name as string,
+              updateProduct.mutate({
+                id: productId as string,
+                name: product_name,
+                stock: Number(stock),
+                price: Number(price),
+                categoryId: categoryId,
               });
             }}
           >
             <div className="mb-6">
               <label
-                htmlFor="category_name"
+                htmlFor="product_name"
                 className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
               >
-                Category Name
+                Product Name
               </label>
               <input
                 type="text"
-                id="category_name"
+                id="product_name"
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 required
-                value={category_name}
-                onChange={(e) => setCategory_name(e.target.value)}
+                value={product_name}
+                onChange={(e) => setProduct_name(e.target.value)}
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="category"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                Category
+              </label>
+              <select
+                name="category"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                id="category"
+                required
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+              >
+                <option defaultValue={""}>Select Category</option>
+                <Categories />
+              </select>
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="price"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                Price
+              </label>
+              <input
+                type="number"
+                id="price"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                required
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="stock"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                Stock
+              </label>
+              <input
+                type="number"
+                id="stock"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                required
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
               />
             </div>
             <div className="">
@@ -205,4 +265,18 @@ const EditCategory = () => {
   );
 };
 
-export default EditCategory;
+export default AdminProductPageComp;
+
+const Categories: React.FC = () => {
+  const { data: categories, isLoading } = trpc.category.getAll.useQuery();
+  if (isLoading) return <option value="">Loading...</option>;
+  return (
+    <>
+      {categories?.map((category) => (
+        <option key={category.id} value={category.id}>
+          {category.name}
+        </option>
+      ))}
+    </>
+  );
+};

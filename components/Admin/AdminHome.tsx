@@ -1,10 +1,10 @@
 import React from "react";
 import Loading from "../Loading";
 import New from "../New";
-import Product from "../product/Product";
 import { trpc } from "../../src/utils/trpc";
+import Product from "./RowProduct";
 
-const AdminHome = () => {
+const AdminHomeComp = () => {
   const { data: products, isLoading } = trpc.product.getAll.useQuery();
 
   if (isLoading) return <Loading />;
@@ -54,4 +54,4 @@ const AdminHome = () => {
   );
 };
 
-export default AdminHome;
+export default AdminHomeComp;

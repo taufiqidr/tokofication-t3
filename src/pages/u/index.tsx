@@ -1,22 +1,21 @@
 import { useSession } from "next-auth/react";
 import React from "react";
-import AdminHome from "../../../components/Admin/AdminHome";
-import Home from "../../../components/Home";
+import AdminUserComp from "../../../components/Admin/AdminUser";
+import UserUserComp from "../../../components/User/UserUser";
 
-const ProductHome = () => {
+const UserHome = () => {
   const { data: session, status } = useSession();
   let content;
   if (status === "authenticated") {
     if (session.user?.role === "ADMIN") {
-      content = <AdminHome />;
+      content = <AdminUserComp />;
     } else {
-      content = <Home />;
+      content = <UserUserComp />;
     }
   } else if (status === "unauthenticated") {
-    content = <Home />;
+    content = <UserUserComp />;
   }
-
   return content;
 };
 
-export default ProductHome;
+export default UserHome;

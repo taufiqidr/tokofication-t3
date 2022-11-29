@@ -1,9 +1,9 @@
 import React from "react";
-import Loading from "../../../components/Loading";
-import { trpc } from "../../utils/trpc";
-import User from "../../../components/user/User";
+import { trpc } from "../../src/utils/trpc";
+import Loading from "../Loading";
+import User from "./RowUser";
 
-const Users = () => {
+const AdminUserComp = () => {
   const { data: users, isLoading } = trpc.user.getAll.useQuery();
 
   if (isLoading) return <Loading />;
@@ -48,4 +48,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default AdminUserComp;

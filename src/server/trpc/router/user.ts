@@ -1,7 +1,23 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = router({
+  //public
+  getAllPublic: publicProcedure.query(async ({ ctx }) => {
+    try {
+      return await ctx.prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+  }),
+  //user only
+  //admin only
+
   getAll: protectedProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.user.findMany({

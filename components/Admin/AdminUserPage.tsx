@@ -1,10 +1,9 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Back from "../../../../components/Back";
-import Loading from "../../../../components/Loading";
-import { trpc } from "../../../utils/trpc";
-
-const EditUser = () => {
+import { trpc } from "../../src/utils/trpc";
+import Back from "../Back";
+import Loading from "../Loading";
+const AdminUserPageComp = () => {
   const [balance, setBalance] = useState("");
   const [userId, setUserId] = useState("");
   const [role, setRole] = useState("");
@@ -150,12 +149,4 @@ const EditUser = () => {
   );
 };
 
-export default EditUser;
-
-// export async function getServerSideProps(context) {
-//   return {
-//     props: {
-//       userId: context.query.id,
-//     },
-//   };
-// }
+export default AdminUserPageComp;

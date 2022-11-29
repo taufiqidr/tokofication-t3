@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Back from "../../../../components/Back";
-import Loading from "../../../../components/Loading";
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "../../src/utils/trpc";
+import Back from "../Back";
+import Loading from "../Loading";
 
-const EditCategory = () => {
+const AdminCategoryPageComp = () => {
   const [category_name, setCategory_name] = useState("");
 
   const [modal, setModal] = useState(false);
@@ -205,4 +205,4 @@ const EditCategory = () => {
   );
 };
 
-export default EditCategory;
+export default AdminCategoryPageComp;

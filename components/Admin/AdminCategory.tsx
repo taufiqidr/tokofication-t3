@@ -1,10 +1,10 @@
 import React from "react";
 import Loading from "../Loading";
-import Category from "../category/Category";
+import Category from "./RowCategory";
 import New from "../New";
 import { trpc } from "../../src/utils/trpc";
 
-const AdminCategory = () => {
+const AdminCategoryComp = () => {
   const { data: categories, isLoading } = trpc.category.getAll.useQuery();
 
   if (isLoading) return <Loading />;
@@ -41,4 +41,4 @@ const AdminCategory = () => {
   );
 };
 
-export default AdminCategory;
+export default AdminCategoryComp;

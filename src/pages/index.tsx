@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import AdminHome from "../../components/Admin/AdminHome";
-import Home from "../../components/Home";
+import UserHomeComp from "../../components/User/UserHome";
 
 const HomePage = () => {
   const { data: session, status } = useSession();
@@ -9,10 +9,10 @@ const HomePage = () => {
     if (session.user?.role === "ADMIN") {
       content = <AdminHome />;
     } else {
-      content = <Home />;
+      content = <UserHomeComp />;
     }
   } else if (status === "unauthenticated") {
-    content = <Home />;
+    content = <UserHomeComp />;
   }
 
   return content;

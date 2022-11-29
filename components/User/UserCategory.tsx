@@ -1,9 +1,9 @@
 import Link from "next/link";
 import React from "react";
-import { trpc } from "../src/utils/trpc";
-import Loading from "./Loading";
+import { trpc } from "../../src/utils/trpc";
+import Loading from "../Loading";
 
-const CategoryComp = () => {
+const UserCategoryComp = () => {
   const { data: categories, isLoading } = trpc.category.getAll.useQuery();
   if (isLoading) return <Loading />;
 
@@ -24,7 +24,7 @@ const CategoryComp = () => {
   );
 };
 
-export default CategoryComp;
+export default UserCategoryComp;
 
 interface Category {
   categoryId: string;

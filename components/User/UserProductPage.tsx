@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { trpc } from "../../src/utils/trpc";
 import Loading from "../Loading";
 
-const ProductPage = () => {
+const UserProductPageComp = () => {
   const [productId, setProductId] = useState("");
   const id = useRouter().query.productId;
 
@@ -28,4 +28,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default UserProductPageComp;

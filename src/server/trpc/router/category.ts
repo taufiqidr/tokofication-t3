@@ -1,24 +1,8 @@
 import { z } from "zod";
-import { router, protectedProcedure, publicProcedure } from "../trpc";
+import { router, publicProcedure, adminProcedure } from "../trpc";
 
 export const categoryRouter = router({
-  postCategory: protectedProcedure
-    .input(
-      z.object({
-        name: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      try {
-        await ctx.prisma.category.create({
-          data: {
-            name: input.name,
-          },
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }),
+  // public
   getAll: publicProcedure.query(async ({ ctx }) => {
     try {
       return await ctx.prisma.category.findMany({
@@ -55,7 +39,29 @@ export const categoryRouter = router({
         console.log("error", error);
       }
     }),
-  deleteCategory: protectedProcedure
+
+  // user only
+
+  // admin only
+  postCategory: adminProcedure
+    .input(
+      z.object({
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.prisma.category.create({
+          data: {
+            name: input.name,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }),
+
+  deleteCategory: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -72,7 +78,7 @@ export const categoryRouter = router({
         console.log("error", error);
       }
     }),
-  updateCategory: protectedProcedure
+  updateCategory: adminProcedure
     .input(
       z.object({
         id: z.string(),
