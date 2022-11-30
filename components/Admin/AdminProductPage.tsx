@@ -1,36 +1,27 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { type Category, type User } from "@prisma/client";
+import React, { useState } from "react";
 import Back from "../Back";
-import Loading from "../Loading";
 import { trpc } from "../../src/utils/trpc";
-
-const AdminProductPageComp = () => {
-  const [product_name, setProduct_name] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
+interface Props {
+  data:
+    | {
+        user: User;
+        id: string;
+        name: string;
+        category: Category;
+        price: number;
+        stock: number;
+      }
+    | null
+    | undefined;
+}
+const AdminProductPageComp = ({ data }: Props) => {
+  const [product_name, setProduct_name] = useState(data?.name);
+  const [categoryId, setCategoryId] = useState(data?.category.id);
+  const [price, setPrice] = useState(String(data?.price));
+  const [stock, setStock] = useState(String(data?.stock));
   const [modal, setModal] = useState(false);
-
-  const [productId, setProductId] = useState("");
-  const id = useRouter().query.id;
-
-  const { data, isLoading } = trpc.product.getOne.useQuery({
-    id: productId as string,
-  });
-
-  useEffect(() => {
-    if (id) setProductId(String(id));
-  }, [id]);
-
-  useEffect(() => {
-    if (data) {
-      setProduct_name(String(data?.name));
-      setCategoryId(data.category.id);
-      setPrice(String(data.price));
-      setStock(String(data.stock));
-    } else {
-    }
-  }, [data]);
 
   const utils = trpc.useContext();
   const router = useRouter();
@@ -44,7 +35,7 @@ const AdminProductPageComp = () => {
         utils.product.getAll.setData(
           undefined,
           optimisticUpdate.map((t) =>
-            t.id === productId
+            t.id === data?.id
               ? {
                   ...t,
                   ...data,
@@ -68,7 +59,7 @@ const AdminProductPageComp = () => {
       if (optimisticUpdate) {
         utils.product.getAll.setData(
           undefined,
-          optimisticUpdate.filter((c) => c.id != productId)
+          optimisticUpdate.filter((c) => c.id != data?.id)
         );
       }
     },
@@ -79,7 +70,6 @@ const AdminProductPageComp = () => {
 
   const disabled = !Boolean(product_name && price && stock && categoryId);
 
-  if (isLoading) return <Loading />;
   return (
     <div className="">
       <div className={`${modal ? "flex justify-center" : "ml-11 mr-5 mt-5"} `}>
@@ -136,7 +126,7 @@ const AdminProductPageComp = () => {
                   data-modal-toggle="popup-modal"
                   onClick={() => {
                     deleteProduct.mutate({
-                      id: productId as string,
+                      id: data?.id as string,
                     });
                   }}
                   type="button"
@@ -162,11 +152,11 @@ const AdminProductPageComp = () => {
             onSubmit={(event) => {
               event.preventDefault();
               updateProduct.mutate({
-                id: productId as string,
-                name: product_name,
+                id: data?.id as string,
+                name: String(product_name),
                 stock: Number(stock),
                 price: Number(price),
-                categoryId: categoryId,
+                categoryId: String(categoryId),
               });
             }}
           >

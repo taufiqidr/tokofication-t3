@@ -1,13 +1,21 @@
 import React from "react";
-import Loading from "../Loading";
 import New from "../New";
-import { trpc } from "../../src/utils/trpc";
 import Product from "./RowProduct";
+import { type Category, type User } from "@prisma/client";
 
-const AdminProductComp = () => {
-  const { data: products, isLoading } = trpc.product.getAll.useQuery();
-
-  if (isLoading) return <Loading />;
+interface Props {
+  products:
+    | {
+        user: User;
+        id: string;
+        name: string;
+        category: Category;
+        price: number;
+        stock: number;
+      }[]
+    | undefined;
+}
+const AdminProductComp = ({ products }: Props) => {
   return (
     <div className="flex flex-col">
       <New link="p/new" item="Product" />

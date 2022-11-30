@@ -4,26 +4,18 @@ import { trpc } from "../../src/utils/trpc";
 import Back from "../Back";
 import Loading from "../Loading";
 
-const AdminCategoryPageComp = () => {
+interface Props {
+  id: string;
+}
+const AdminCategoryPageComp = ({ id }: Props) => {
   const [category_name, setCategory_name] = useState("");
-
   const [modal, setModal] = useState(false);
-  const [categoryId, setCategoryId] = useState("");
-  const id = useRouter().query.id;
-
   const { data, isLoading } = trpc.category.getOne.useQuery({
-    id: categoryId as string,
+    id: id as string,
   });
 
   useEffect(() => {
-    if (id) setCategoryId(String(id));
-  }, [id]);
-
-  useEffect(() => {
-    if (data) {
-      setCategory_name(String(data?.name));
-    } else {
-    }
+    if (data) setCategory_name(String(data?.name));
   }, [data]);
 
   const utils = trpc.useContext();
@@ -38,7 +30,7 @@ const AdminCategoryPageComp = () => {
         utils.category.getAll.setData(
           undefined,
           optimisticUpdate.map((t) =>
-            t.id === categoryId
+            t.id === data?.id
               ? {
                   ...t,
                   ...data,
@@ -62,7 +54,7 @@ const AdminCategoryPageComp = () => {
       if (optimisticUpdate) {
         utils.category.getAll.setData(
           undefined,
-          optimisticUpdate.filter((c) => c.id != categoryId)
+          optimisticUpdate.filter((c) => c.id != data?.id)
         );
       }
     },
@@ -130,7 +122,7 @@ const AdminCategoryPageComp = () => {
                   data-modal-toggle="popup-modal"
                   onClick={() => {
                     deleteCategory.mutate({
-                      id: categoryId as string,
+                      id: data?.id as string,
                     });
                   }}
                   type="button"
@@ -156,7 +148,7 @@ const AdminCategoryPageComp = () => {
             onSubmit={(event) => {
               event.preventDefault();
               updateCategory.mutate({
-                id: categoryId as string,
+                id: data?.id as string,
                 name: category_name as string,
               });
             }}

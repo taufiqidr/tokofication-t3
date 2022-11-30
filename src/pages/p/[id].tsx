@@ -1,20 +1,33 @@
 import { useSession } from "next-auth/react";
 import UserProductPageComp from "../../../components/User/UserProductPage";
 import AdminProductPageComp from "../../../components/Admin/AdminProductPage";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { trpc } from "../../utils/trpc";
+import Loading from "../../../components/Loading";
 
 const ProductPage = () => {
-  const { data: session, status } = useSession();
+  const [productId, setProductId] = useState("");
+  const { data: session } = useSession();
   let content;
-  if (status === "authenticated") {
-    if (session.user?.role === "ADMIN") {
-      content = <AdminProductPageComp />;
-    } else {
-      content = <UserProductPageComp />;
-    }
-  } else if (status === "unauthenticated") {
-    content = <UserProductPageComp />;
-  }
+  const id = useRouter().query.id;
+  useEffect(() => {
+    if (id) setProductId(String(id));
+  }, [id]);
+  const { data: product, isLoading } = trpc.product.getOne.useQuery({
+    id: productId as string,
+  });
 
+  if (!session) {
+    content = <UserProductPageComp product={product} />;
+  } else {
+    if (session?.user?.id !== product?.user?.id) {
+      content = <UserProductPageComp product={product} session={session} />;
+    } else {
+      content = <AdminProductPageComp data={product} />;
+    }
+  }
+  if (isLoading) return <Loading />;
   return content;
 };
 

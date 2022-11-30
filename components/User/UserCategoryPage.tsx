@@ -1,21 +1,16 @@
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
 import { trpc } from "../../src/utils/trpc";
 import Back from "../Back";
 import Loading from "../Loading";
 import ProductItem from "../ProductItem";
 
-const UserCategoryPageComp = () => {
-  const id = useRouter().query.id;
-  const [categoryId, setCategoryId] = useState("");
-
+interface Props {
+  categoryId: string;
+}
+const UserCategoryPageComp = ({ categoryId }: Props) => {
   const { data: products, isLoading } = trpc.product.getByCategory.useQuery({
     categoryId: categoryId as string,
   });
 
-  useEffect(() => {
-    if (id) setCategoryId(String(id));
-  }, [id]);
   if (isLoading) return <Loading />;
 
   return (

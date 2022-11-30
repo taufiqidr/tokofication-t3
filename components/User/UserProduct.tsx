@@ -1,13 +1,21 @@
 import Link from "next/link";
 import React from "react";
-import { trpc } from "../../src/utils/trpc";
-import Loading from "../Loading";
 import ProductItem from "../ProductItem";
+import { type Category, type User } from "@prisma/client";
 
-const UserHomeComp = () => {
-  const { data: products, isLoading } = trpc.product.getAll.useQuery();
-  if (isLoading) return <Loading />;
-
+interface Props {
+  products:
+    | {
+        user: User;
+        id: string;
+        name: string;
+        category: Category;
+        price: number;
+        stock: number;
+      }[]
+    | undefined;
+}
+const UserHomeComp = ({ products }: Props) => {
   return (
     <div className="mx-3 flex h-full w-auto flex-col">
       <p className="mt-2 text-xl">
@@ -23,7 +31,7 @@ const UserHomeComp = () => {
             id={product.id}
             name={product.name}
             price={product.price}
-            seller={String(product.user.email)}
+            seller={String(product.user.name)}
             stock={product.stock}
           />
         ))}

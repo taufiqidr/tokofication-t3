@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  router,
-  protectedProcedure,
-  publicProcedure,
-  adminProcedure,
-} from "../trpc";
+import { router, protectedProcedure, publicProcedure } from "../trpc";
 
 export const productRouter = router({
   //public
@@ -162,7 +157,54 @@ export const productRouter = router({
         console.log("error", error);
       }
     }),
-
+  buyProduct: protectedProcedure
+    .input(
+      z.object({
+        productId: z.string(),
+        sellerId: z.string(),
+        buyerId: z.string(),
+        price: z.number(),
+        stock: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return (
+          await ctx.prisma.product.update({
+            where: {
+              id: input.productId,
+            },
+            data: {
+              stock: {
+                decrement: 1,
+              },
+            },
+          }),
+          await ctx.prisma.user.update({
+            where: {
+              id: input.buyerId,
+            },
+            data: {
+              balance: {
+                decrement: input.price,
+              },
+            },
+          }),
+          await ctx.prisma.user.update({
+            where: {
+              id: input.sellerId,
+            },
+            data: {
+              balance: {
+                increment: input.price,
+              },
+            },
+          })
+        );
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
   updateProductUser: protectedProcedure
     .input(
       z.object({
@@ -194,7 +236,7 @@ export const productRouter = router({
 
   //admin only
 
-  deleteProduct: adminProcedure
+  deleteProduct: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -212,7 +254,7 @@ export const productRouter = router({
       }
     }),
 
-  updateProduct: adminProcedure
+  updateProduct: protectedProcedure
     .input(
       z.object({
         id: z.string(),
