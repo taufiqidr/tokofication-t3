@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { trpc } from "../../src/utils/trpc";
@@ -17,6 +18,7 @@ const UserCategoryComp = () => {
             key={category.id}
             categoryId={category.id}
             name={category.name}
+            image={category?.image}
           />
         ))}
       </div>
@@ -29,13 +31,31 @@ export default UserCategoryComp;
 interface Category {
   categoryId: string;
   name: string;
+  image: string | null;
 }
-const Item = ({ categoryId, name }: Category) => {
+const Item = ({ categoryId, name, image }: Category) => {
+  const img = () =>
+    String(
+      `https://ugulpstombooodglvogg.supabase.co/storage/v1/object/public/tokofication-image/category/${image}`
+    );
   return (
     <Link href={`/c/${categoryId}`}>
       <div className="m-2 flex h-40 w-40 flex-col rounded-lg hover:text-blue-500">
-        <div className="flex h-full w-full items-center justify-center rounded-lg border p-2 text-3xl">
-          <p>{name}</p>
+        <div className="h-2/4 rounded-t-lg border">
+          {image && (
+            <Image
+              src={img()}
+              alt={categoryId}
+              loader={img}
+              width={36}
+              height={36}
+            ></Image>
+          )}
+        </div>
+        <div className="h-2/4 rounded-b-lg border p-2">
+          <div className="flex h-full w-full items-center justify-center rounded-lg border p-2 text-3xl">
+            <p>{name}</p>
+          </div>
         </div>
       </div>
     </Link>

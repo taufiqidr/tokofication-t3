@@ -13,20 +13,22 @@ const Navbar = () => {
 
   if (status === "authenticated") {
     menu = (
-      <Image
-        src={String(session.user?.image)}
-        alt="profile pic"
-        loader={pic}
-        height={36}
-        width={36}
-        className="cursor-pointer rounded-full border border-slate-500 hover:brightness-90"
-        onClick={() => setShow((prev) => !prev)}
-        id="menu-button"
-        aria-expanded="true"
-        aria-haspopup="true"
-        unoptimized={true}
-        loading="lazy"
-      ></Image>
+      <div className="h-9 w-9 rounded-full bg-slate-500">
+        <Image
+          src={String(session.user?.image)}
+          alt="profile pic"
+          loader={pic}
+          height={36}
+          width={36}
+          className="cursor-pointer rounded-full border border-slate-500 hover:brightness-90"
+          onClick={() => setShow((prev) => !prev)}
+          id="menu-button"
+          aria-expanded="true"
+          aria-haspopup="true"
+          unoptimized={true}
+          loading="lazy"
+        ></Image>
+      </div>
     );
   } else if (status === "unauthenticated") {
     menu = (

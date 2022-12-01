@@ -63,10 +63,11 @@ model VerificationToken {
 }
 
 model Product {
-  id    String @id @default(cuid())
+  id    String  @id @default(cuid())
   name  String
   price Int
   stock Int
+  image String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,9 +80,9 @@ model Product {
 }
 
 model Category {
-  id   String @id @default(cuid())
-  name String
-
+  id      String    @id @default(cuid())
+  name    String
+  image   String?
   product Product[]
 
   createdAt DateTime @default(now())

@@ -15,16 +15,20 @@ const ProductPage = () => {
     if (id) setProductId(String(id));
   }, [id]);
   const { data: product, isLoading } = trpc.product.getOne.useQuery({
-    id: productId as string,
+    id: productId,
   });
 
   if (!session) {
     content = <UserProductPageComp product={product} />;
   } else {
-    if (session?.user?.id !== product?.user?.id) {
-      content = <UserProductPageComp product={product} session={session} />;
-    } else {
+    if (session?.user?.role === "ADMIN") {
       content = <AdminProductPageComp data={product} />;
+    } else if (session?.user?.role === "USER") {
+      if (session?.user?.id !== product?.user?.id) {
+        content = <UserProductPageComp product={product} session={session} />;
+      } else {
+        content = <AdminProductPageComp data={product} />;
+      }
     }
   }
   if (isLoading) return <Loading />;

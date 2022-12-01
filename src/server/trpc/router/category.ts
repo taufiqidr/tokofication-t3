@@ -9,6 +9,7 @@ export const categoryRouter = router({
         select: {
           id: true,
           name: true,
+          image: true,
         },
         orderBy: {
           createdAt: "desc",
@@ -33,6 +34,7 @@ export const categoryRouter = router({
           select: {
             id: true,
             name: true,
+            image: true,
           },
         });
       } catch (error) {
@@ -47,6 +49,7 @@ export const categoryRouter = router({
     .input(
       z.object({
         name: z.string(),
+        image: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -54,6 +57,7 @@ export const categoryRouter = router({
         await ctx.prisma.category.create({
           data: {
             name: input.name,
+            image: input.image,
           },
         });
       } catch (error) {
