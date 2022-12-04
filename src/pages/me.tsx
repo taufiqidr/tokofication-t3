@@ -41,20 +41,28 @@ const Unauthenticated = () => {
 
 const Profile = () => {
   const { data: session } = useSession();
-  const pic = () => String(session?.user?.image);
+  let pic;
+
+  if (session?.user?.image?.match(new RegExp("^[https]"))) {
+    pic = () => String(session.user?.image);
+  } else {
+    pic = () =>
+      String(
+        `https://ugulpstombooodglvogg.supabase.co/storage/v1/object/public/tokofication-image/user/${session?.user?.image}`
+      );
+  }
+
   return (
     <div className="mx-3 flex h-full w-auto flex-col ">
       <div className="m-3 flex justify-start">
         <Image
-          src={String(session?.user?.image)}
+          src={pic()}
           alt="profile pic"
           loader={pic}
           height={240}
           width={240}
           className="cursor-pointer rounded-full border border-slate-500"
-          id="menu-button"
-          aria-expanded="true"
-          aria-haspopup="true"
+          loading="lazy"
         ></Image>
         <div className="mx-3 flex flex-col justify-between">
           <div>
@@ -63,6 +71,9 @@ const Profile = () => {
             </div>
             <div className=" text-3xl ">
               {money.format(Number(session?.user?.balance))}
+            </div>
+            <div className=" text-3xl capitalize text-slate-500">
+              {session?.user?.role.toLowerCase()}
             </div>
           </div>
           <div>

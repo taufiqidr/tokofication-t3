@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { trpc } from "../../src/utils/trpc";
 import Back from "../Back";
 import Loading from "../Loading";
+
 const AdminUserPageComp = () => {
   const [balance, setBalance] = useState("");
   const [userId, setUserId] = useState("");

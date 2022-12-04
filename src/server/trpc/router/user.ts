@@ -16,6 +16,47 @@ export const userRouter = router({
     }
   }),
   //user only
+  getOneSelf: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      return await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          image: true,
+          balance: true,
+          role: true,
+        },
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+  }),
+  updateSelfUser: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        image: z.string().nullable(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.user.update({
+          where: {
+            id: ctx.session.user.id,
+          },
+          data: {
+            name: input.name,
+            image: input.image,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
   //admin only
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -49,6 +90,7 @@ export const userRouter = router({
             id: true,
             email: true,
             name: true,
+            image: true,
             balance: true,
             role: true,
           },

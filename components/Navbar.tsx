@@ -6,16 +6,26 @@ import { useState } from "react";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  const pic = () => String(session?.user?.image);
 
   const [show, setShow] = useState(true);
-  let menu;
+  let menu, pic;
+  if (session?.user?.image?.match(new RegExp("^[https]"))) {
+    pic = () => String(session.user?.image);
+  } else {
+    pic = () =>
+      String(
+        `https://ugulpstombooodglvogg.supabase.co/storage/v1/object/public/tokofication-image/user/${session?.user?.image}`
+      );
+  }
+  if (status === "loading") {
+    menu = <div className="h-9 w-9 rounded-full bg-slate-500"></div>;
+  }
 
   if (status === "authenticated") {
     menu = (
       <div className="h-9 w-9 rounded-full bg-slate-500">
         <Image
-          src={String(session.user?.image)}
+          src={pic()}
           alt="profile pic"
           loader={pic}
           height={36}

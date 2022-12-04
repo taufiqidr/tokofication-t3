@@ -10,10 +10,16 @@ const ProductPage = () => {
   const [productId, setProductId] = useState("");
   const { data: session } = useSession();
   let content;
-  const id = useRouter().query.id;
+  const router = useRouter();
+  const id = router.query.id;
+
+  if (!productId) {
+    content = <Loading />;
+  }
   useEffect(() => {
     if (id) setProductId(String(id));
   }, [id]);
+
   const { data: product, isLoading } = trpc.product.getOne.useQuery({
     id: productId,
   });

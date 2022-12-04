@@ -40,15 +40,16 @@ const Item = ({ categoryId, name, image }: Category) => {
     );
   return (
     <Link href={`/c/${categoryId}`}>
-      <div className="m-2 flex h-40 w-40 flex-col rounded-lg hover:text-blue-500">
+      <div className="m-2 flex h-60 w-40 flex-col rounded-lg hover:text-blue-500">
         <div className="h-2/4 rounded-t-lg border">
           {image && (
             <Image
               src={img()}
               alt={categoryId}
               loader={img}
-              width={36}
-              height={36}
+              width={240}
+              height={240}
+              className="h-full w-full rounded-t-lg object-contain"
             ></Image>
           )}
         </div>
