@@ -6,6 +6,7 @@ import { trpc } from "../../src/utils/trpc";
 import Loading from "../../components/Loading";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../utils/supabase";
+import Image from "next/image";
 
 const SettingPage = () => {
   const { status } = useSession();
@@ -72,6 +73,21 @@ const Setting = () => {
     },
   });
 
+  let pic;
+
+  if (data?.image?.match(new RegExp("^[https]"))) {
+    pic = () => String(data?.image);
+  } else {
+    pic = () =>
+      String(
+        `https://ugulpstombooodglvogg.supabase.co/storage/v1/object/public/tokofication-image/user/${data?.image}`
+      );
+  }
+
+  if (imageFile) {
+    pic = () => URL.createObjectURL(imageFile);
+  }
+
   if (isLoading) return <Loading />;
 
   return (
@@ -90,6 +106,38 @@ const Setting = () => {
         >
           <div className="mb-6">
             <label
+              htmlFor="file_input"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              Profile Picture
+            </label>
+            <div className="flex flex-row items-center">
+              <div className=" h-[120px] w-[120px] rounded-full border">
+                <Image
+                  src={pic()}
+                  alt="profile pic"
+                  loader={pic}
+                  height={120}
+                  width={120}
+                  className="h-full w-full rounded-full object-cover"
+                  loading="lazy"
+                ></Image>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                className="mx-3 cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+                id="file_input"
+                onChange={(e) =>
+                  setImageFile(() =>
+                    e.target.files ? e.target.files[0] : undefined
+                  )
+                }
+              />
+            </div>
+          </div>
+          <div className="mb-6">
+            <label
               htmlFor="name"
               className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
             >
@@ -102,25 +150,6 @@ const Setting = () => {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="file_input"
-              className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              ProfilePic
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
-              id="file_input"
-              onChange={(e) =>
-                setImageFile(() =>
-                  e.target.files ? e.target.files[0] : undefined
-                )
-              }
             />
           </div>
 

@@ -9,12 +9,35 @@ export const userRouter = router({
         select: {
           id: true,
           name: true,
+          image: true,
         },
       });
     } catch (error) {
       console.log("error", error);
     }
   }),
+  getOnePublic: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.user.findUnique({
+          where: {
+            id: input.id,
+          },
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
   //user only
   getOneSelf: protectedProcedure.query(async ({ ctx }) => {
     try {
@@ -68,6 +91,7 @@ export const userRouter = router({
           name: true,
           balance: true,
           role: true,
+          product: true,
         },
       });
     } catch (error) {

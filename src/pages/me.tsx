@@ -55,15 +55,17 @@ const Profile = () => {
   return (
     <div className="mx-3 flex h-full w-auto flex-col ">
       <div className="m-3 flex justify-start">
-        <Image
-          src={pic()}
-          alt="profile pic"
-          loader={pic}
-          height={240}
-          width={240}
-          className="cursor-pointer rounded-full border border-slate-500"
-          loading="lazy"
-        ></Image>
+        <div className=" h-[240px] w-[240px] rounded-full border">
+          <Image
+            src={pic()}
+            alt="profile pic"
+            loader={pic}
+            height={240}
+            width={240}
+            className="h-full w-full rounded-full object-cover"
+            loading="lazy"
+          ></Image>
+        </div>
         <div className="mx-3 flex flex-col justify-between">
           <div>
             <div className=" mb-3 text-5xl font-bold">
@@ -84,6 +86,15 @@ const Profile = () => {
         `}
               >
                 Sell a Product
+              </button>
+            </Link>
+            <Link href={"/s"}>
+              <button
+                className={`mx-3 w-full  rounded-lg bg-orange-700 px-5 py-2.5 text-center text-sm font-medium text-white   
+         hover:bg-orange-800 focus:outline-none focus:ring-4 focus:ring-orange-300 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800 sm:w-auto
+        `}
+              >
+                Edit Profile
               </button>
             </Link>
           </div>

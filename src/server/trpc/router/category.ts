@@ -10,7 +10,9 @@ export const categoryRouter = router({
           id: true,
           name: true,
           image: true,
+          product: true,
         },
+
         orderBy: {
           createdAt: "desc",
         },

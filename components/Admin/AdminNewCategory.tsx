@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import Back from "../Back";
 import { supabase } from "../../src/utils/supabase";
+import Image from "next/image";
 const AdminNewCategoryComp = () => {
   const [category_name, setCategory_name] = useState("");
   const [image, setImage] = useState<File | undefined>();
@@ -32,7 +33,9 @@ const AdminNewCategoryComp = () => {
       .from("tokofication-image")
       .upload("category/" + image_name, image as File);
   };
+  let pic;
 
+  if (image) pic = () => URL.createObjectURL(image);
   const disabled = !Boolean(category_name);
 
   return (
@@ -52,6 +55,40 @@ const AdminNewCategoryComp = () => {
         >
           <div className="mb-6">
             <label
+              htmlFor="file_input"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              Image
+            </label>
+            <div className="flex flex-row items-center">
+              <div className=" h-[120px] w-[120px] rounded-lg border">
+                {pic && (
+                  <Image
+                    src={pic()}
+                    alt="profile pic"
+                    loader={pic}
+                    height={120}
+                    width={120}
+                    className="h-full w-full rounded-lg object-cover"
+                    loading="lazy"
+                  ></Image>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                className="mx-3 cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+                id="file_input"
+                onChange={(e) =>
+                  setImage(() =>
+                    e.target.files ? e.target.files[0] : undefined
+                  )
+                }
+              />
+            </div>
+          </div>
+          <div className="mb-6">
+            <label
               htmlFor="category_name"
               className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
             >
@@ -66,23 +103,7 @@ const AdminNewCategoryComp = () => {
               onChange={(e) => setCategory_name(e.target.value)}
             />
           </div>
-          <div className="mb-6">
-            <label
-              htmlFor="file_input"
-              className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              Category Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
-              id="file_input"
-              onChange={(e) =>
-                setImage(() => (e.target.files ? e.target.files[0] : undefined))
-              }
-            />
-          </div>
+
           <div className="">
             <button
               type="submit"
@@ -98,7 +119,6 @@ const AdminNewCategoryComp = () => {
             </button>
           </div>
         </form>
-        <button onClick={Upload}>Upload</button>
       </div>
     </div>
   );

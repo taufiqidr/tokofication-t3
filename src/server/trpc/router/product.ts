@@ -97,23 +97,6 @@ export const productRouter = router({
         console.log("error", error);
       }
     }),
-  countProduct: publicProcedure
-    .input(
-      z.object({
-        categoryId: z.string(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      try {
-        return await ctx.prisma.product.count({
-          where: {
-            categoryId: input.categoryId,
-          },
-        });
-      } catch (error) {
-        console.log("error", error);
-      }
-    }),
   //user only
   postProduct: protectedProcedure
     .input(

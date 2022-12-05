@@ -2,7 +2,7 @@ import React from "react";
 
 const Loading = () => {
   return (
-    <div role="status" className="my-auto h-full w-full">
+    <div role="status" className="mt-24">
       <svg
         aria-hidden="true"
         className="m-auto h-48 w-48 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"

@@ -41,24 +41,7 @@ export const UserProductPageComp = ({ session, product }: Props) => {
   });
 
   let btn;
-  btn = (
-    <button
-      className={`rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white   
-hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
-`}
-      onClick={() => {
-        buyProduct.mutate({
-          productId: productId as string,
-          stock: Number(product?.stock),
-          price: Number(product?.price),
-          buyerId: String(session?.user?.id),
-          sellerId: String(product?.user.id),
-        });
-      }}
-    >
-      Buy This Product
-    </button>
-  );
+
   if (!session) {
     btn = (
       <button
@@ -68,6 +51,33 @@ hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-bl
         You need to login to buy a product
       </button>
     );
+  } else {
+    if (Number(session.user?.balance) < Number(product?.price)) {
+      btn = (
+        <button className="text-whitehover:bg-slate-800 cursor-not-allowed rounded-lg bg-slate-700 px-5 py-2.5 text-center text-sm font-medium focus:outline-none focus:ring-4 focus:ring-slate-300 dark:bg-slate-600 dark:hover:bg-slate-700 dark:focus:ring-slate-800">
+          Not enough balance
+        </button>
+      );
+    } else {
+      btn = (
+        <button
+          className={`rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white   
+  hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
+  `}
+          onClick={() => {
+            buyProduct.mutate({
+              productId: productId as string,
+              stock: Number(product?.stock),
+              price: Number(product?.price),
+              buyerId: String(session?.user?.id),
+              sellerId: String(product?.user.id),
+            });
+          }}
+        >
+          Buy This Product
+        </button>
+      );
+    }
   }
 
   return (

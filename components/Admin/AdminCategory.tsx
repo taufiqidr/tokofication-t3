@@ -32,6 +32,7 @@ const AdminCategoryComp = () => {
                 key={category.id}
                 id={category.id}
                 name={category.name}
+                count={category.product.length}
               />
             ))}
           </tbody>

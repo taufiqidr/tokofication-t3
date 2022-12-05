@@ -20,6 +20,9 @@ const AdminUserComp = () => {
                 Name
               </th>
               <th scope="col" className="py-3 px-6">
+                Product Qty
+              </th>
+              <th scope="col" className="py-3 px-6">
                 Balance
               </th>
               <th scope="col" className="py-3 px-6">
@@ -33,12 +36,13 @@ const AdminUserComp = () => {
           <tbody>
             {users?.map((user) => (
               <User
-                key={user.id as string}
-                userId={user.id as string}
-                email={user.email as string}
-                balance={user.balance as number}
-                role={user.role as string}
-                name={user.name as string}
+                key={user.id}
+                userId={user.id}
+                email={user.email}
+                name={user.name}
+                balance={user.balance}
+                role={user.role}
+                count={user.product.length}
               />
             ))}
           </tbody>

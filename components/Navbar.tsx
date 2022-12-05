@@ -23,14 +23,14 @@ const Navbar = () => {
 
   if (status === "authenticated") {
     menu = (
-      <div className="h-9 w-9 rounded-full bg-slate-500">
+      <div className="h-[36px] w-[36px] rounded-full border bg-slate-500">
         <Image
           src={pic()}
           alt="profile pic"
           loader={pic}
           height={36}
           width={36}
-          className="cursor-pointer rounded-full border border-slate-500 hover:brightness-90"
+          className="h-full w-full cursor-pointer rounded-full border border-slate-500 object-cover hover:brightness-90"
           onClick={() => setShow((prev) => !prev)}
           id="menu-button"
           aria-expanded="true"
@@ -52,7 +52,7 @@ const Navbar = () => {
   }
 
   return (
-    <header className="sticky top-0 w-full flex-none  bg-gray-800 py-3">
+    <header className="sticky top-0 w-full bg-gray-800 py-3">
       <div className="flex h-full flex-row items-center justify-between">
         <div>
           <Link href={"/"}>

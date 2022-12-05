@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </Head>
       <div className="flex min-h-screen flex-col">
         <Navbar />
-        <main className="h-full min-h-full grow">{children}</main>
+        <main className="h-full">{children}</main>
         <Footer />
       </div>
     </>
