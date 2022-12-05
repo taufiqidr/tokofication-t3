@@ -113,4 +113,21 @@ export const requestRouter = router({
         console.log("error", error);
       }
     }),
+  deleteRequest: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.request.delete({
+          where: {
+            id: input.id,
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
 });

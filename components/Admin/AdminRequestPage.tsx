@@ -104,37 +104,67 @@ const Request = ({ id, amount, status, email, userId }: Request) => {
       }
     },
   });
+  const deleteRequest = trpc.request.deleteRequest.useMutation({
+    onMutate: () => {
+      utils.request.getAll.cancel();
+      const optimisticUpdate = utils.request.getAll.getData();
+
+      if (optimisticUpdate) {
+        utils.request.getAll.setData(
+          undefined,
+          optimisticUpdate.filter((c) => c.id !== id)
+        );
+      }
+    },
+  });
+  let btn;
+  if (status === "pending") {
+    btn = (
+      <div className="flex flex-row gap-x-3">
+        <button
+          className="rounded-sm bg-blue-500 px-1 text-xl"
+          onClick={() => {
+            requestApproved.mutate({
+              id: id,
+              amount: amount,
+              userId: userId,
+            });
+          }}
+        >
+          <BsCheck />
+        </button>
+        <button
+          className="rounded-sm bg-red-500 px-1 text-xl"
+          onClick={() => {
+            requestRejected.mutate({
+              id: id,
+            });
+          }}
+        >
+          <BsX />
+        </button>
+      </div>
+    );
+  } else {
+    btn = (
+      <button
+        className="rounded-sm bg-red-500 px-1 text-lg"
+        onClick={() => {
+          deleteRequest.mutate({
+            id: id,
+          });
+        }}
+      >
+        Delete
+      </button>
+    );
+  }
   return (
     <tr className="border-b bg-white hover:bg-gray-600 dark:border-gray-700 dark:bg-gray-800">
       <td className="py-4 px-6 text-white">{money.format(amount)}</td>
       <td className="py-4 px-6 text-white">{email}</td>
       <td className="py-4 px-6 text-white">{status}</td>
-      <td className="py-4 px-6 text-white">
-        <div className="flex flex-row gap-x-3">
-          <button
-            className="rounded-sm bg-blue-500 p-1 text-lg"
-            onClick={() => {
-              requestApproved.mutate({
-                id: id,
-                amount: amount,
-                userId: userId,
-              });
-            }}
-          >
-            <BsCheck />
-          </button>
-          <button
-            className="rounded-sm bg-red-500 p-1 text-lg"
-            onClick={() => {
-              requestRejected.mutate({
-                id: id,
-              });
-            }}
-          >
-            <BsX />
-          </button>
-        </div>
-      </td>
+      <td className="py-4 px-6 text-white">{btn}</td>
     </tr>
   );
 };

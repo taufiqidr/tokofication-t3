@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { money } from "../../src/utils/money";
 import { trpc } from "../../src/utils/trpc";
@@ -9,18 +8,16 @@ const UserRequestPageComp = () => {
   const [amount, setAmount] = useState("");
 
   const utils = trpc.useContext();
-  const { data: session } = useSession();
 
   const newRequest = trpc.request.newRequest.useMutation({
     onMutate: () => {
       utils.request.getSelfRequest.cancel();
       const optimisticUpdate = utils.request.getSelfRequest.getData();
-
       if (optimisticUpdate) {
         utils.request.getSelfRequest.setData(undefined, [
           ...optimisticUpdate,
           {
-            id: String(session?.user?.id),
+            id: Math.random().toString(),
             amount: Number(amount),
             status: "pending",
           },
@@ -45,12 +42,16 @@ const UserRequestPageComp = () => {
               <th scope="col" className="py-3 px-6">
                 Status
               </th>
+              <th scope="col" className="py-3 px-6">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
             {requests?.map((request) => (
               <Request
                 key={request.id}
+                id={request.id}
                 amount={request.amount}
                 status={request.status}
               />
@@ -117,14 +118,42 @@ const UserRequestPageComp = () => {
 export default UserRequestPageComp;
 
 interface Request {
+  id: string;
   amount: number;
   status: string;
 }
-const Request = ({ amount, status }: Request) => {
+const Request = ({ id, amount, status }: Request) => {
+  const utils = trpc.useContext();
+
+  const deleteRequest = trpc.request.deleteRequest.useMutation({
+    onMutate: () => {
+      utils.request.getSelfRequest.cancel();
+      const optimisticUpdate = utils.request.getSelfRequest.getData();
+
+      if (optimisticUpdate) {
+        utils.request.getSelfRequest.setData(
+          undefined,
+          optimisticUpdate.filter((c) => c.id !== id)
+        );
+      }
+    },
+  });
   return (
     <tr className="border-b bg-white hover:bg-gray-600 dark:border-gray-700 dark:bg-gray-800">
       <td className="py-4 px-6 text-white">{money.format(amount)}</td>
       <td className="py-4 px-6 text-white">{status}</td>
+      <td className="py-4 px-6 text-white">
+        <button
+          className="rounded-sm bg-red-500 p-1 text-lg"
+          onClick={() => {
+            deleteRequest.mutate({
+              id: id,
+            });
+          }}
+        >
+          Delete
+        </button>
+      </td>
     </tr>
   );
 };
