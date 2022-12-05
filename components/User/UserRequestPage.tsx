@@ -144,7 +144,7 @@ const Request = ({ id, amount, status }: Request) => {
       <td className="py-4 px-6 text-white">{status}</td>
       <td className="py-4 px-6 text-white">
         <button
-          className="rounded-sm bg-red-500 p-1 text-lg"
+          className="rounded-sm bg-red-500 px-1 text-lg"
           onClick={() => {
             deleteRequest.mutate({
               id: id,
