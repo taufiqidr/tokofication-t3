@@ -2,13 +2,12 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-// import { trpc } from "../src/utils/trpc";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
 
   const [show, setShow] = useState(true);
-  let menu, pic;
+  let menu, pic, request;
   if (session?.user?.image?.match(new RegExp("^[https]"))) {
     pic = () => String(session.user?.image);
   } else {
@@ -40,6 +39,15 @@ const Navbar = () => {
         ></Image>
       </div>
     );
+    if (session.user?.role === "ADMIN") {
+      request = (
+        <li className="hover:text-blue-500">
+          <Link href={"/req"}>
+            <span className="cursor-pointer">Request</span>
+          </Link>
+        </li>
+      );
+    }
   } else if (status === "unauthenticated") {
     menu = (
       <div
@@ -76,6 +84,7 @@ const Navbar = () => {
                 <span className="cursor-pointer">User</span>
               </Link>
             </li>
+            {request}
           </ul>
           {menu}
         </nav>

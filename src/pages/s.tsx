@@ -1,4 +1,4 @@
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Back from "../../components/Back";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
@@ -7,6 +7,7 @@ import Loading from "../../components/Loading";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../utils/supabase";
 import Image from "next/image";
+import Unauthenticated from "../../components/Unauthenticated";
 
 const SettingPage = () => {
   const { status } = useSession();
@@ -168,23 +169,6 @@ const Setting = () => {
             </button>
           </div>
         </form>
-      </div>
-    </div>
-  );
-};
-
-const Unauthenticated = () => {
-  return (
-    <div className="mx-3 flex h-full w-auto flex-col ">
-      <Back />
-      <div className="flex h-full flex-col items-center justify-center text-5xl">
-        <p>You need to login to access this page</p>
-        <div
-          onClick={() => signIn("discord")}
-          className="mt-3 cursor-pointer rounded-lg bg-blue-600 px-3 py-1 text-base hover:bg-blue-500"
-        >
-          Login with Discord
-        </div>
       </div>
     </div>
   );

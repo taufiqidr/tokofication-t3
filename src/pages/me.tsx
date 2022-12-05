@@ -1,12 +1,12 @@
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import Back from "../../components/Back";
 import { money } from "../utils/money";
 import React, { useEffect, useState } from "react";
 import { trpc } from "../utils/trpc";
 import Loading from "../../components/Loading";
 import ProductItem from "../../components/ProductItem";
+import Unauthenticated from "../../components/Unauthenticated";
 
 const ProfilePage = () => {
   const { status } = useSession();
@@ -21,23 +21,6 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-const Unauthenticated = () => {
-  return (
-    <div className="mx-3 flex h-full w-auto flex-col ">
-      <Back />
-      <div className="flex h-full flex-col items-center justify-center text-5xl">
-        <p>You need to login to access this page</p>
-        <div
-          onClick={() => signIn("discord")}
-          className="mt-3 cursor-pointer rounded-lg bg-blue-600 px-3 py-1 text-base hover:bg-blue-500"
-        >
-          Login with Discord
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Profile = () => {
   const { data: session } = useSession();
@@ -95,6 +78,15 @@ const Profile = () => {
         `}
               >
                 Edit Profile
+              </button>
+            </Link>
+            <Link href={"/req"}>
+              <button
+                className={` w-full  rounded-lg bg-green-700 px-5 py-2.5 text-center text-sm font-medium text-white   
+         hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 sm:w-auto
+        `}
+              >
+                Request Money
               </button>
             </Link>
           </div>
