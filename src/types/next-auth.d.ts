@@ -8,11 +8,11 @@ declare module "next-auth" {
     user?: {
       id: string;
       role: "ADMIN" | "USER";
-      balance: number | null | undefined;
+      balance: number | null;
     } & DefaultSession["user"];
   }
   interface User extends DefaultUser {
-    role?: "ADMIN" | "USER";
-    balance?: number | null | undefined;
+    role: "ADMIN" | "USER";
+    balance: number | null;
   }
 }

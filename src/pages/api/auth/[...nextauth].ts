@@ -9,7 +9,7 @@ export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
     session({ session, user }) {
-      if (session?.user) {
+      if (session.user) {
         session.user.id = user.id;
         session.user.role = user.role;
         session.user.balance = user.balance;
