@@ -1,21 +1,33 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { supabase } from "../../src/utils/supabase";
 import { trpc } from "../../src/utils/trpc";
 import Back from "../Back";
 import Loading from "../Loading";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props {
   id: string;
 }
 const AdminCategoryPageComp = ({ id }: Props) => {
-  const [category_name, setCategory_name] = useState("");
-  const [modal, setModal] = useState(false);
   const { data, isLoading } = trpc.category.getOne.useQuery({
     id: id as string,
   });
 
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
+  const [imageFile, setImageFile] = useState<File | undefined>();
+  const image_name = uuidv4() + ".jpg";
+  const old_image = data?.image;
+
+  const [modal, setModal] = useState(false);
+
   useEffect(() => {
-    if (data) setCategory_name(String(data?.name));
+    if (data) {
+      setName(String(data.name));
+      setImage(String(data.image));
+    }
   }, [data]);
 
   const utils = trpc.useContext();
@@ -63,7 +75,31 @@ const AdminCategoryPageComp = ({ id }: Props) => {
     },
   });
 
-  const disabled = !Boolean(category_name);
+  const Upload = async () => {
+    await supabase.storage
+      .from("tokofication-image")
+      .upload("category/" + image_name, imageFile as File);
+  };
+
+  const Delete = async () => {
+    await supabase.storage
+      .from("tokofication-image")
+      .remove(["category/" + old_image]);
+  };
+
+  let pic;
+
+  if (image) {
+    pic = () =>
+      String(
+        `https://ugulpstombooodglvogg.supabase.co/storage/v1/object/public/tokofication-image/category/${image}`
+      );
+  }
+
+  if (imageFile) {
+    pic = () => URL.createObjectURL(imageFile);
+  }
+  const disabled = !Boolean(name);
 
   if (isLoading) return <Loading />;
   return (
@@ -124,6 +160,7 @@ const AdminCategoryPageComp = ({ id }: Props) => {
                     deleteCategory.mutate({
                       id: data?.id as string,
                     });
+                    if (old_image) Delete();
                   }}
                   type="button"
                   className="mr-2 inline-flex items-center rounded-lg bg-red-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
@@ -149,10 +186,61 @@ const AdminCategoryPageComp = ({ id }: Props) => {
               event.preventDefault();
               updateCategory.mutate({
                 id: data?.id as string,
-                name: category_name as string,
+                name: name as string,
+                image: imageFile ? image_name : image,
               });
+              if (imageFile) {
+                Delete();
+                Upload();
+              }
             }}
           >
+            <div className="mb-6">
+              <label
+                htmlFor="file_input"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                Image
+              </label>
+              <div className="flex flex-row items-center">
+                <div className=" h-[120px] w-[120px] rounded-lg border">
+                  {pic && (
+                    <Image
+                      src={pic()}
+                      alt="profile pic"
+                      loader={pic}
+                      height={120}
+                      width={120}
+                      className="h-full w-full rounded-lg object-cover"
+                      loading="lazy"
+                    ></Image>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="mx-3 cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+                    id="file_input"
+                    onChange={(e) =>
+                      setImageFile(() =>
+                        e.target.files ? e.target.files[0] : undefined
+                      )
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      Delete();
+                      setImage("");
+                    }}
+                    className={`mx-3 mt-3 rounded-lg bg-red-700 px-5 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 `}
+                  >
+                    Remove Image
+                  </button>
+                </div>
+              </div>
+            </div>
             <div className="mb-6">
               <label
                 htmlFor="category_name"
@@ -165,8 +253,8 @@ const AdminCategoryPageComp = ({ id }: Props) => {
                 id="category_name"
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                 required
-                value={category_name}
-                onChange={(e) => setCategory_name(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="">

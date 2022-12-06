@@ -26,7 +26,7 @@ export default SettingPage;
 const Setting = () => {
   const { data, isLoading } = trpc.user.getOneSelf.useQuery();
   const image_name = uuidv4() + ".jpg";
-
+  const old_image = data?.image;
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
   const [imageFile, setImageFile] = useState<File | undefined>();
@@ -35,6 +35,12 @@ const Setting = () => {
     await supabase.storage
       .from("tokofication-image")
       .upload("user/" + image_name, imageFile as File);
+  };
+
+  const Delete = async () => {
+    await supabase.storage
+      .from("tokofication-image")
+      .remove(["user/" + old_image]);
   };
 
   useEffect(() => {
@@ -102,7 +108,10 @@ const Setting = () => {
               name: String(name),
               image: imageFile ? image_name : image,
             });
-            Upload();
+            if (imageFile) {
+              Delete();
+              Upload();
+            }
           }}
         >
           <div className="mb-6">

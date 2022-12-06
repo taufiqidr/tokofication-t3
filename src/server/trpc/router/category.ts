@@ -89,6 +89,7 @@ export const categoryRouter = router({
       z.object({
         id: z.string(),
         name: z.string(),
+        image: z.string().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -99,6 +100,7 @@ export const categoryRouter = router({
           },
           data: {
             name: input.name,
+            image: input.image,
           },
         });
       } catch (error) {

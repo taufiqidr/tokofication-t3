@@ -47,9 +47,9 @@ const AdminNewCategoryComp = () => {
             event.preventDefault();
             postCategory.mutate({
               name: category_name,
-              image: image_name,
+              image: image ? image_name : "",
             });
-            Upload();
+            if (image) Upload();
             setCategory_name("");
           }}
         >

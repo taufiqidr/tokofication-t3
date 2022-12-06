@@ -49,7 +49,7 @@ const Item = ({ categoryId, name, image }: Category) => {
               loader={img}
               width={240}
               height={240}
-              className="h-full w-full rounded-t-lg object-contain"
+              className="h-full w-full rounded-t-lg object-cover object-top"
             ></Image>
           )}
         </div>
