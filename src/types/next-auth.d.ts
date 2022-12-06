@@ -8,7 +8,7 @@ declare module "next-auth" {
     user?: {
       id: string;
       role: "ADMIN" | "USER";
-      balance: number;
+      balance: number | null | undefined;
     } & DefaultSession["user"];
   }
 }
