@@ -122,6 +122,7 @@ const ProductList = () => {
             price={product.price}
             seller={String(product.user.name)}
             stock={product.stock}
+            image={product.image}
           />
         ))}
       </div>
