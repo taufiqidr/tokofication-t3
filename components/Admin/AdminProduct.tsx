@@ -12,6 +12,7 @@ interface Props {
         category: Category;
         price: number;
         stock: number;
+        image: string;
       }[]
     | undefined;
 }

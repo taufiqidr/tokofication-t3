@@ -3,6 +3,10 @@ import { type Category, type User } from "@prisma/client";
 import React, { useState } from "react";
 import Back from "../Back";
 import { trpc } from "../../src/utils/trpc";
+import { v4 as uuidv4 } from "uuid";
+import { supabase } from "../../src/utils/supabase";
+import Image from "next/image";
+
 interface Props {
   data:
     | {
@@ -12,6 +16,7 @@ interface Props {
         category: Category;
         price: number;
         stock: number;
+        image: string;
       }
     | null
     | undefined;
@@ -22,6 +27,11 @@ const AdminProductPageComp = ({ data }: Props) => {
   const [price, setPrice] = useState(String(data?.price));
   const [stock, setStock] = useState(String(data?.stock));
   const [modal, setModal] = useState(false);
+
+  const [image, setImage] = useState(String(data?.image));
+  const [imageFile, setImageFile] = useState<File | undefined>();
+  const image_name = uuidv4() + ".jpg";
+  const old_image = data?.image;
 
   const utils = trpc.useContext();
   const router = useRouter();
@@ -68,6 +78,29 @@ const AdminProductPageComp = ({ data }: Props) => {
     },
   });
 
+  const Upload = async () => {
+    await supabase.storage
+      .from("tokofication-image")
+      .upload("product/" + image_name, imageFile as File);
+  };
+
+  const Delete = async () => {
+    await supabase.storage
+      .from("tokofication-image")
+      .remove(["product/" + old_image]);
+  };
+  let pic;
+
+  if (image) {
+    pic = () =>
+      String(
+        `https://ugulpstombooodglvogg.supabase.co/storage/v1/object/public/tokofication-image/product/${image}`
+      );
+  }
+
+  if (imageFile) {
+    pic = () => URL.createObjectURL(imageFile);
+  }
   const disabled = !Boolean(product_name && price && stock && categoryId);
 
   return (
@@ -128,6 +161,7 @@ const AdminProductPageComp = ({ data }: Props) => {
                     deleteProduct.mutate({
                       id: data?.id as string,
                     });
+                    if (old_image) Delete();
                   }}
                   type="button"
                   className="mr-2 inline-flex items-center rounded-lg bg-red-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-800"
@@ -157,9 +191,60 @@ const AdminProductPageComp = ({ data }: Props) => {
                 stock: Number(stock),
                 price: Number(price),
                 categoryId: String(categoryId),
+                image: imageFile ? image_name : image,
               });
+              if (imageFile) {
+                Delete();
+                Upload();
+              }
             }}
           >
+            <div className="mb-6">
+              <label
+                htmlFor="file_input"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                Image
+              </label>
+              <div className="flex flex-row items-center">
+                <div className=" h-[120px] w-[120px] rounded-lg border">
+                  {pic && (
+                    <Image
+                      src={pic()}
+                      alt="profile pic"
+                      loader={pic}
+                      height={120}
+                      width={120}
+                      className="h-full w-full rounded-lg object-cover"
+                      loading="lazy"
+                    ></Image>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="mx-3 cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+                    id="file_input"
+                    onChange={(e) =>
+                      setImageFile(() =>
+                        e.target.files ? e.target.files[0] : undefined
+                      )
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      Delete();
+                      setImage("");
+                    }}
+                    className={`mx-3 mt-3 rounded-lg bg-red-700 px-5 py-2 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 `}
+                  >
+                    Remove Image
+                  </button>
+                </div>
+              </div>
+            </div>
             <div className="mb-6">
               <label
                 htmlFor="product_name"

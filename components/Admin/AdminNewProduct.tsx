@@ -2,6 +2,9 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { trpc } from "../../src/utils/trpc";
 import Back from "../Back";
+import { v4 as uuidv4 } from "uuid";
+import { supabase } from "../../src/utils/supabase";
+import Image from "next/image";
 
 const AdminNewProductComp = () => {
   const [product_name, setProduct_name] = useState("");
@@ -9,8 +12,12 @@ const AdminNewProductComp = () => {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
 
+  const [image, setImage] = useState<File | undefined>();
+  const image_name = uuidv4() + ".jpg";
+
   const router = useRouter();
   const utils = trpc.useContext();
+
   const postProduct = trpc.product.postProduct.useMutation({
     onMutate: () => {
       utils.product.getAll.cancel();
@@ -25,10 +32,20 @@ const AdminNewProductComp = () => {
       router.push("/p");
     },
   });
+
+  const Upload = async () => {
+    await supabase.storage
+      .from("tokofication-image")
+      .upload("product/" + image_name, image as File);
+  };
+
+  let pic;
+
+  if (image) pic = () => URL.createObjectURL(image);
   const disabled = !Boolean(product_name && price && stock && categoryId);
 
   return (
-    <div className="max-w-full">
+    <div className="mb-3 max-w-full">
       <div className="ml-11 mr-5 mt-5">
         <Back />
         <form
@@ -39,13 +56,49 @@ const AdminNewProductComp = () => {
               stock: Number(stock),
               price: Number(price),
               categoryId: categoryId,
+              image: image ? image_name : "",
             });
+            if (image) Upload();
             setProduct_name("");
             setPrice("");
             setCategoryId("");
             setStock("");
           }}
         >
+          <div className="mb-6">
+            <label
+              htmlFor="file_input"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300"
+            >
+              Image
+            </label>
+            <div className="flex flex-row items-center">
+              <div className=" h-[120px] w-[120px] rounded-lg border">
+                {pic && (
+                  <Image
+                    src={pic()}
+                    alt="profile pic"
+                    loader={pic}
+                    height={120}
+                    width={120}
+                    className="h-full w-full rounded-lg object-cover"
+                    loading="lazy"
+                  ></Image>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                className="mx-3 cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400 dark:placeholder-gray-400"
+                id="file_input"
+                onChange={(e) =>
+                  setImage(() =>
+                    e.target.files ? e.target.files[0] : undefined
+                  )
+                }
+              />
+            </div>
+          </div>
           <div className="mb-6">
             <label
               htmlFor="product_name"

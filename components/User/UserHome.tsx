@@ -26,6 +26,7 @@ const UserHomeComp = () => {
             price={product.price}
             seller={String(product.user.email)}
             stock={product.stock}
+            image={product.image}
           />
         ))}
       </div>

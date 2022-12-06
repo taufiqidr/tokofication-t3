@@ -13,6 +13,7 @@ export const productRouter = router({
           price: true,
           stock: true,
           user: true,
+          image: true,
         },
         orderBy: {
           createdAt: "desc",
@@ -41,6 +42,7 @@ export const productRouter = router({
             price: true,
             stock: true,
             user: true,
+            image: true,
           },
         });
       } catch (error) {
@@ -66,6 +68,7 @@ export const productRouter = router({
             price: true,
             stock: true,
             user: true,
+            image: true,
           },
         });
       } catch (error) {
@@ -91,6 +94,7 @@ export const productRouter = router({
             price: true,
             stock: true,
             user: true,
+            image: true,
           },
         });
       } catch (error) {
@@ -105,6 +109,7 @@ export const productRouter = router({
         categoryId: z.string(),
         price: z.number(),
         stock: z.number(),
+        image: z.string().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -115,6 +120,7 @@ export const productRouter = router({
             userId: ctx.session.user.id,
             price: input.price,
             stock: input.stock,
+            image: input.image,
             categoryId: input.categoryId,
           },
         });
@@ -196,6 +202,7 @@ export const productRouter = router({
         categoryId: z.string(),
         price: z.number(),
         stock: z.number(),
+        image: z.string().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -210,6 +217,7 @@ export const productRouter = router({
             price: input.price,
             stock: input.stock,
             categoryId: input.categoryId,
+            image: input.image,
           },
         });
       } catch (error) {
@@ -245,6 +253,7 @@ export const productRouter = router({
         categoryId: z.string(),
         price: z.number(),
         stock: z.number(),
+        image: z.string().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -259,6 +268,7 @@ export const productRouter = router({
             price: input.price,
             stock: input.stock,
             categoryId: input.categoryId,
+            image: input.image,
           },
         });
       } catch (error) {

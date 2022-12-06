@@ -12,6 +12,7 @@ interface Props {
         category: Category;
         price: number;
         stock: number;
+        image: string | null;
       }[]
     | undefined;
 }
@@ -33,6 +34,7 @@ const UserHomeComp = ({ products }: Props) => {
             price={product.price}
             seller={String(product.user.name)}
             stock={product.stock}
+            image={product.image}
           />
         ))}
       </div>

@@ -33,6 +33,7 @@ const AdminNewCategoryComp = () => {
       .from("tokofication-image")
       .upload("category/" + image_name, image as File);
   };
+
   let pic;
 
   if (image) pic = () => URL.createObjectURL(image);
