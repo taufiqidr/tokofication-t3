@@ -58,7 +58,7 @@ const Profile = () => {
               {money.format(Number(session?.user?.balance))}
             </div>
             <div className=" text-3xl capitalize text-slate-500">
-              {session?.user?.role.toLowerCase()}
+              {session?.user?.role?.toLowerCase()}
             </div>
           </div>
           <div>
